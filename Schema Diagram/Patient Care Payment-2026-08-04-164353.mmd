@@ -1,0 +1,118 @@
+erDiagram
+    PATIENTS {
+        integer patient_id PK
+        varchar name
+        varchar phone
+        varchar blood_type
+        text address
+        varchar primary_specialization
+        text allergies
+    }
+
+    EMERGENCY_CONTACTS {
+        integer contact_id PK
+        integer patient_id FK
+        varchar name
+        varchar phone
+        varchar relationship
+    }
+
+    HOSPITALS {
+        integer hospital_id PK
+        varchar name
+        geometry location_coords
+        integer general_beds
+        integer icu_beds
+        hospital_type type
+    }
+
+    SPECIALIZATIONS {
+        integer spec_id PK
+        varchar spec_name
+    }
+
+    DOCTORS {
+        integer doctor_id PK
+        varchar name
+        varchar phone
+        boolean is_available
+        integer spec_id FK
+        integer hospital_id FK
+    }
+
+    DOCTOR_SCHEDULES {
+        integer schedule_id PK
+        integer doctor_id FK
+        varchar day_of_week
+        time start_time
+        time end_time
+    }
+
+    DOCTOR_ASSIGNMENTS {
+        integer assignment_id PK
+        integer patient_id FK
+        integer doctor_id FK
+        date appointment_date
+        time appointment_time
+        assignment_status status
+        varchar payment_status
+        boolean payment_reminder_sent
+    }
+
+    AMBULANCES {
+        integer vehicle_id PK
+        varchar license_plate
+        vehicle_status status
+        equipment_lvl equipment_level
+    }
+
+    DRIVERS {
+        integer driver_id PK
+        varchar name
+        varchar phone
+        varchar license_number
+        shift_status shift_status
+        integer vehicle_id FK
+    }
+
+    TRIP_LOGS {
+        varchar trip_id PK
+        integer patient_id FK
+        integer driver_id FK
+        integer hospital_id FK
+        req_status status
+        severity_lvl severity
+        geometry pickup_coords
+        varchar fare
+    }
+
+    BILLING {
+        integer bill_id PK
+        varchar trip_id FK
+        integer patient_id FK
+        numeric amount
+        numeric tax
+        numeric total_amount
+        varchar payment_status
+        date date_issued
+        boolean payment_reminder_sent
+    }
+
+    PATIENTS ||--o{ EMERGENCY_CONTACTS : "has"
+    PATIENTS ||--o{ DOCTOR_ASSIGNMENTS : "requests"
+    PATIENTS ||--o{ TRIP_LOGS : "requests"
+    PATIENTS ||--o{ BILLING : "receives"
+    
+    HOSPITALS ||--o{ DOCTORS : "employs"
+    HOSPITALS ||--o{ TRIP_LOGS : "receives_patient_at"
+    
+    SPECIALIZATIONS ||--o{ DOCTORS : "categorizes"
+    
+    DOCTORS ||--o{ DOCTOR_SCHEDULES : "has"
+    DOCTORS ||--o{ DOCTOR_ASSIGNMENTS : "is_assigned_to"
+    
+    AMBULANCES ||--o| DRIVERS : "assigned_to"
+    
+    DRIVERS ||--o{ TRIP_LOGS : "drives"
+    
+    TRIP_LOGS ||--o| BILLING : "generates"

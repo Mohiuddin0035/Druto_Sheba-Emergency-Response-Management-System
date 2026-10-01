@@ -1,0 +1,15 @@
+# Root Level Git Ignore
+node_modules/
+.next/
+out/
+build/
+.vercel/
+.env.local
+*.log
+.DS_Store
+Thumbs.db
+
+# Ignore Sensitive Documentation & Worksheets
+necessary docs/
+necessary docs
+*.backup.js
